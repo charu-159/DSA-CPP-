@@ -1,64 +1,104 @@
-#include <stdio.h>
+//number split 1 to 10 in even and odd
+#include <iostream>
+using namespace std;
 
 struct Node {
     int data;
-    struct Node *next;
+    Node *next;
 };
 
-int main() {
-    // Create 10 nodes statically
-    struct Node nodes[10];
-    struct Node *first = NULL, *even = NULL, *odd = NULL;
-    struct Node *temp, *etemp = NULL, *otemp = NULL;
+Node *first, *temp, *ntemp, *ptemp;
+Node *efirst = NULL, *etemp = NULL;
+Node *ofirst = NULL, *otemp = NULL;
 
-    // Initialize data and links for 1→2→3→...→10
-    for (int i = 0; i < 10; i++) {
-        nodes[i].data = i + 1;
-        nodes[i].next = (i < 9) ? &nodes[i + 1] : NULL;
-    }
-    first = &nodes[0];  // first node
+Node* createp(int x) {
+    Node *p = new Node;
+    p->data = x;
+    p->next = NULL;
+    return p;
+}
 
+void init() {
+    first = temp = ntemp = ptemp = NULL;
+    efirst = etemp = ofirst = otemp = NULL;
+}
+
+void createfirst(int x) {
+    first = new Node;
+    first->data = x;
+    first->next = NULL;
+}
+
+void addnode(int x) {
     temp = first;
+    while (temp->next != NULL)
+        temp = temp->next;
+    ntemp = new Node;
+    ntemp->data = x;
+    ntemp->next = NULL;
+    temp->next = ntemp;
+}
 
-    // Split list into even and odd
+void disp(Node *head) {
+    temp = head;
     while (temp != NULL) {
-        if (temp->data % 2 == 0) {  // even
-            if (even == NULL)
-                even = etemp = temp;
-            else {
-                etemp->next = temp;
-                etemp = temp;
-            }
-        } else {  // odd
-            if (odd == NULL)
-                odd = otemp = temp;
-            else {
-                otemp->next = temp;
-                otemp = temp;
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+void even_part() {
+    temp = first;
+    while (temp != NULL) {
+        if (temp->data % 2 == 0) {
+            ntemp = createp(temp->data);
+            if (efirst == NULL) {
+                efirst = ntemp;
+                etemp = efirst;
+            } else {
+                etemp->next = ntemp;
+                etemp = etemp->next;
             }
         }
         temp = temp->next;
     }
+}
 
-    // Terminate both lists properly
-    if (etemp) etemp->next = NULL;
-    if (otemp) otemp->next = NULL;
-
-    // Display even list
-    printf("Even List: ");
-    temp = even;
+void odd_part() {
+    temp = first;
     while (temp != NULL) {
-        printf("%d ", temp->data);
+        if (temp->data % 2 != 0) {
+            ptemp = createp(temp->data);
+            if (ofirst == NULL) {
+                ofirst = ptemp;
+                otemp = ofirst;
+            } else {
+                otemp->next = ptemp;
+                otemp = otemp->next;
+            }
+        }
         temp = temp->next;
     }
+}
 
-    // Display odd list
-    printf("\nOdd List: ");
-    temp = odd;
-    while (temp != NULL) {
-        printf("%d ", temp->data);
-        temp = temp->next;
+int main() {
+    init();
+    createfirst(1);
+    for (int i = 2; i <= 10; i++) {
+        addnode(i);
     }
+
+    cout << "Original Linked List: ";
+    disp(first);
+
+    even_part();
+    cout << "Even Linked List: ";
+    disp(efirst);
+
+    odd_part();
+    cout << "Odd Linked List: ";
+    disp(ofirst);
 
     return 0;
 }
